@@ -47,14 +47,21 @@ int main(int argc, char **argv)
 
     pid_t pid;
 
-    sleep(10);
-
     if ((pid = Fork()) == 0)
     {
-      // Do nothing
+      struct sockaddr_in addr;
+      socklen_t addrlen = sizeof(addr);
+      char ipstr[INET_ADDRSTRLEN];
+
+      Getpeername(connfd, (struct sockaddr *)&addr, &addrlen);
+      inet_ntop(AF_INET, &(addr.sin_addr), ipstr, sizeof(ipstr));
+
+      printf("Cliente (%s:%d) conectado.\n", ipstr, htons(addr.sin_port));
 
       Close(connfd);
     }
+
+    sleep(10);
   }
   return (0);
 }

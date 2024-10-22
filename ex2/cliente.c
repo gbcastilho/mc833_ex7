@@ -53,15 +53,6 @@ int main(int argc, char **argv)
     printf("Cliente %d tentando conectar.\n", i + 1);
 
     Connect(sockfd[i], (struct sockaddr *)&servaddr, sizeof(servaddr));
-
-    struct sockaddr_in addr;
-    socklen_t addrlen = sizeof(addr);
-    char ipstr[INET_ADDRSTRLEN];
-
-    Getsockname(sockfd[i], (struct sockaddr *)&addr, &addrlen);
-    inet_ntop(AF_INET, &(addr.sin_addr), ipstr, sizeof(ipstr));
-
-    printf("Cliente %d (%s:%d) conectado.\n", i + 1, ipstr, htons(addr.sin_port));
   }
 
   for (int i = 0; i < clientsQtd; i += 1)
