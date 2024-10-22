@@ -15,6 +15,7 @@
 
 int main(int argc, char **argv)
 {
+  int sockfd;
   char error[MAXLINE + 1];
   struct sockaddr_in servaddr;
 
@@ -29,6 +30,8 @@ int main(int argc, char **argv)
   char *ip = argv[1];
   int port = atoi(argv[2]);
 
+  sockfd = Socket(AF_INET, SOCK_STREAM, 0);
+
   bzero(&servaddr, sizeof(servaddr));
   servaddr.sin_family = AF_INET;
   servaddr.sin_port = htons(port);
@@ -39,26 +42,11 @@ int main(int argc, char **argv)
     exit(1);
   }
 
-  int clientsQtd;
+  Connect(sockfd, (struct sockaddr *)&servaddr, sizeof(servaddr));
 
-  printf("How many clients: ");
-  scanf("%d", &clientsQtd);
+  sleep(10);
 
-  int sockfd[MAX_CLIENTS];
-
-  for (int i = 0; i < clientsQtd; i += 1)
-  {
-    sockfd[i] = Socket(AF_INET, SOCK_STREAM, 0);
-
-    printf("Cliente %d tentando conectar.\n", i + 1);
-
-    Connect(sockfd[i], (struct sockaddr *)&servaddr, sizeof(servaddr));
-  }
-
-  for (int i = 0; i < clientsQtd; i += 1)
-  {
-    close(sockfd[i]);
-  }
+  Close(sockfd);
 
   exit(0);
 }

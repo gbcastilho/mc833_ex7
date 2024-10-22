@@ -49,6 +49,7 @@ int main(int argc, char **argv)
 
     if ((pid = Fork()) == 0)
     {
+      Close(listenfd);
       struct sockaddr_in addr;
       socklen_t addrlen = sizeof(addr);
       char ipstr[INET_ADDRSTRLEN];
@@ -59,9 +60,12 @@ int main(int argc, char **argv)
       printf("Cliente (%s:%d) conectado.\n", ipstr, htons(addr.sin_port));
 
       Close(connfd);
-    }
 
+      exit(0);
+    }
+    
     sleep(10);
+    Close(connfd);
   }
   return (0);
 }
