@@ -9,6 +9,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <sys/select.h>
 #include "net_api.h"
 
 #define MAX_CLIENTS 30
@@ -72,68 +73,75 @@ int main(int argc, char **argv)
     // Copiando o conjunto de descritores para evitar modificações
     fd_set tmp_fds = readfds;
 
-    if (select(max_fd + 1, &tmp_fds, NULL, NULL, NULL) < 0) {
-        break;
+    if (select(max_fd + 1, &tmp_fds, NULL, NULL, NULL) < 0)
+    {
+      break;
     }
 
     // // Verificando se há dados para ler em cada socket
-    if (FD_ISSET(sockfd1, &tmp_fds)) {
-    //         // Ler dados do servidor 1
-    //         // ...
-            // char *message1 = "Hello from client to server 1";
-            // send(sockfd1, message1, strlen(message1), 0);
-            
-            FILE *fp = fopen(input_file, "r");
-            if (fp == NULL) {
-                perror("fopen");
-                exit(1);
-            }
+    if (FD_ISSET(sockfd1, &tmp_fds))
+    {
+      //         // Ler dados do servidor 1
+      //         // ...
+      // char *message1 = "Hello from client to server 1";
+      // send(sockfd1, message1, strlen(message1), 0);
 
-            char buffer1[1024];
-            while (fgets(buffer1, sizeof(buffer1), fp) != NULL) {
-                // Remove o caractere de nova linha, se houver
-                // buffer[strcspn(buffer, "\n")] = 0;
+      FILE *fp = fopen(input_file, "r");
+      if (fp == NULL)
+      {
+        perror("fopen");
+        exit(1);
+      }
 
-                // Envia os dados para o servidor
-                send(sockfd1, buffer1, strlen(buffer1), 0);
-            }
+      char buffer1[1024];
+      while (fgets(buffer1, sizeof(buffer1), fp) != NULL)
+      {
+        // Remove o caractere de nova linha, se houver
+        // buffer[strcspn(buffer, "\n")] = 0;
 
-            valread1 = read(sockfd1, buff1, 1024);
-            if (valread1 == 0)
-            {
-              shutdown(sockfd1, SHUT_WR);
-              break;
-            }
-            printf("%s\n", buff1);
+        // Envia os dados para o servidor
+        send(sockfd1, buffer1, strlen(buffer1), 0);
+      }
+
+      valread1 = read(sockfd1, buff1, 1024);
+      if (valread1 == 0)
+      {
+        shutdown(sockfd1, SHUT_WR);
+        break;
+      }
+      printf("%s\n", buff1);
     }
-    if (FD_ISSET(sockfd2, &tmp_fds)) {
-    //         // Ler dados do servidor 2
-    //         // ...
-            // char *message2 = "Hello from client to server 2";
-            // send(sockfd2, message2, strlen(message2), 0);
+    if (FD_ISSET(sockfd2, &tmp_fds))
+    {
+      //         // Ler dados do servidor 2
+      //         // ...
+      // char *message2 = "Hello from client to server 2";
+      // send(sockfd2, message2, strlen(message2), 0);
 
-            FILE *fp = fopen(input_file, "r");
-            if (fp == NULL) {
-                perror("fopen");
-                exit(1);
-            }
+      FILE *fp = fopen(input_file, "r");
+      if (fp == NULL)
+      {
+        perror("fopen");
+        exit(1);
+      }
 
-            char buffer2[1024];
-            while (fgets(buffer2, sizeof(buffer2), fp) != NULL) {
-                // Remove o caractere de nova linha, se houver
-                // buffer[strcspn(buffer, "\n")] = 0;
+      char buffer2[1024];
+      while (fgets(buffer2, sizeof(buffer2), fp) != NULL)
+      {
+        // Remove o caractere de nova linha, se houver
+        // buffer[strcspn(buffer, "\n")] = 0;
 
-                // Envia os dados para o servidor
-                send(sockfd2, buffer2, strlen(buffer2), 0);
-            }
+        // Envia os dados para o servidor
+        send(sockfd2, buffer2, strlen(buffer2), 0);
+      }
 
-            valread2 = read(sockfd2, buff2, 1024);
-            if (valread2 == 0)
-            {
-              shutdown(sockfd2, SHUT_WR);
-              break;
-            }
-            printf("%s\n", buff2);
+      valread2 = read(sockfd2, buff2, 1024);
+      if (valread2 == 0)
+      {
+        shutdown(sockfd2, SHUT_WR);
+        break;
+      }
+      printf("%s\n", buff2);
     }
   }
 
